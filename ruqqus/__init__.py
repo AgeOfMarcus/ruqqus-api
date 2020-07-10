@@ -8,14 +8,14 @@ class Server500(BaseException):
 class Post(object):
     def __init__(self, ruqqus, json):
         self.ruqqus = ruqqus
-        self.author = User(ruqqus, json['author'])
+        self.author = User(ruqqus, ruqqus.user(json['author']))
         self.body = json['body']
         self.body_html = json['body_html']
         self.created = datetime.datetime.utcfromtimestamp(json['created_utc'])
         self.domain = json['domain']
         self.edited = 0 if json['edited'] == 0 else datetime.datetime.utcfromtimestamp(json['edited'])
         self.embed_url = json['embed_url']
-        self.guild = Guild(json['guild_name'])
+        self.guild = Guild(ruqqus, ruqqus.guild(json['guild_name']))
         self.id = json['id']
         self.is_archived = json['is_archived']
         self.is_banned = json['is_banned']
@@ -23,7 +23,7 @@ class Post(object):
         self.is_nsfl = json['is_nsfl']
         self.is_nsfw = json['is_nsfw']
         self.is_offensive = json['is_offensive']
-        self.original_guild = Guild(ruqqus, json['original_guild_name'])
+        self.original_guild = Guild(ruqqus, ruqqus.guild(json['original_guild_name']))
         self.permalink = "https://ruqqus.com" + json['permalink']
         self.thumb_url = json['thumb_url']
         self.title = json['title']
