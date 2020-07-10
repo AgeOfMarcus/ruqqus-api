@@ -1,9 +1,102 @@
-import requests, warnings, atoma, urllib.parse
+import requests, warnings, atoma, urllib.parse, datetime
 
 class InvalidLogin(BaseException):
     pass
 class Server500(BaseException):
     pass
+
+class Post(object):
+    def __init__(self, ruqqus, json):
+        self.ruqqus = ruqqus
+        self.author = User(ruqqus, json['author'])
+        self.body = json['body']
+        self.body_html = json['body_html']
+        self.created = datetime.datetime.utcfromtimestamp(json['created_utc'])
+        self.domain = json['domain']
+        self.edited = 0 if json['edited'] == 0 else datetime.datetime.utcfromtimestamp(json['edited'])
+        self.embed_url = json['embed_url']
+        self.guild = Guild(json['guild_name'])
+        self.id = json['id']
+        self.is_archived = json['is_archived']
+        self.is_banned = json['is_banned']
+        self.is_deleted = json['is_deleted']
+        self.is_nsfl = json['is_nsfl']
+        self.is_nsfw = json['is_nsfw']
+        self.is_offensive = json['is_offensive']
+        self.original_guild = Guild(ruqqus, json['original_guild_name'])
+        self.permalink = "https://ruqqus.com" + json['permalink']
+        self.thumb_url = json['thumb_url']
+        self.title = json['title']
+        self.url = json['url']
+        self.voted = json['voted']
+        self.json = json
+    def vote(self, v=1):
+        if not v in [-1, 0, 1]: raise ValueError("Vote must be -1, 0, or 1")
+        return self.ruqqus.vote_post(self.id, v)
+    def reply(self, body):
+        return self.ruqqus.api_comment(self.id, self.id, body)
+    def __str__(self):
+        return self.title
+    def __repr__(self):
+        return "Post(%s)" % self.id
+
+class User(object):
+    def __init__(self, ruqqus, json):
+        self.ruqqus = ruqqus
+        self.badges = json['badges']
+        self.banner_url = "https://ruqqus.com" + json['banner_url']
+        self.comment_count = json['comment_count']
+        self.comment_rep = json['comment_rep']
+        self.created = datetime.datetime.utcfromtimestamp(json['created_utc'])
+        self.id = json['id']
+        self.is_banned = json['is_banned']
+        self.permalink = "https://ruqqus.com" + json['permalink']
+        self.post_count = json['post_count']
+        self.post_rep = json['post_rep']
+        self.profile_url = "https://ruqqus.com" + json['profile_url']
+        self.title = json['title']
+        self.username = json['username']
+        self.json = json
+    def follow(self):
+        return self.ruqqus.follow_user(self.username)
+    def unfollow(self):
+        return self.ruqqus.unfollow_user(self.username)
+    def listing(self):
+        return self.ruqqus.user_listing(self.username)
+    def __str__(self):
+        return self.username
+    def __repr__(self):
+        return "User(%s)" % self.username
+
+class Guild(object):
+    def __init__(self, ruqqus, json):
+        self.ruqqus = ruqqus
+        self.banner_url = json['banner_url']
+        self.color = json['color']
+        self.created = datetime.datetime.utcfromtimestamp(json['created_utc'])
+        self.description = json['description']
+        self.description_html = json['description_html']
+        self.id = json['id']
+        self.is_banned = json['is_banned']
+        self.is_private = json['is_private']
+        self.is_restricted = json['is_restricted']
+        self.mods_count = json['mods_count']
+        self.name = json['name']
+        self.over_18 = json['over_18']
+        self.permalink = "https://ruqqus.com" + json['permalink']
+        self.profile_url = json['profile_url']
+        self.subscriber_count = json['subscriber_count']
+        self.json = json
+    def subscribe(self):
+        return self.ruqqus.subscribe_board(self.name)
+    def unsubscribe(self):
+        return self.ruqqus.unsubscribe_board(self.name)
+    def listing(self):
+        return self.ruqqus.board_listing(self.name)
+    def __str__(self):
+        return self.name
+    def __repr__(self):
+        return "Guild(%s)" % self.name
 
 class RuqqusAPI(object):
     def __init__(self, username, password):
