@@ -34,7 +34,7 @@ class Post(object):
         if not v in [-1, 0, 1]: raise ValueError("Vote must be -1, 0, or 1")
         return self.ruqqus.vote_post(self.id, v)
     def reply(self, body):
-        return self.ruqqus.api_comment(self.id, self.id, body)
+        return self.ruqqus.api_comment(self.id, "t2"+self.id, body)
     def __str__(self):
         return self.title
     def __repr__(self):
@@ -157,6 +157,26 @@ class RuqqusAPI(object):
     # </unofficial v1>
 
     # <unofficial>
+    def submit_post(self, title, board, url="", body="", file=None, over_18=False):
+        r = self.session.post("https://ruqqus.com/submit", data={
+            'title': title,
+            'board': board,
+            'url': url,
+            'body': body,
+            'over_18': over_18,
+        }, files={'file': file})
+        return r
+    
+    def delete_post(self, pid):
+        return self.session.post("https://ruqqus.com/delete_post/" + pid).status_code == 204
+
+    def create_guild(self, name, description):
+        r = self.session.post("https://ruqqus.com/create_guild", data={
+            'name': name,
+            'description': description,
+        })
+        return r.url if ('+' + name) in r.url else r
+
     def get_post_title(self, url):
         return self.session.get("https://ruqqus.com/api/submit/title?url=" + urllib.parse.quote_plus(url)).json()
 
