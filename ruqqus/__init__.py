@@ -13,7 +13,7 @@ class Post(object):
         self.body_html = json['body_html']
         self.created = datetime.datetime.utcfromtimestamp(json['created_utc'])
         self.domain = json['domain']
-        self.edited = 0 if json['edited'] == 0 else datetime.datetime.utcfromtimestamp(json['edited'])
+        self.edited = 0 if json['edited_utc'] == 0 else datetime.datetime.utcfromtimestamp(json['edited_utc'])
         self.embed_url = json['embed_url']
         self.guild = Guild(ruqqus, ruqqus.guild(json['guild_name']))
         self.id = json['id']
