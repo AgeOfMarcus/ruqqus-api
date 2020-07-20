@@ -235,10 +235,10 @@ class RuqqusAPI(object):
         return self.session.get("https://ruqqus.com/@%s/pic/profile" % username).url
     
     def vote_post(self, post_id, x="1"):
-        return self.session.post("https://ruqqus.com/api/vote/post/%s/%s" % (post_id, x)).status_code == 204
+        return True if (x:=self.session.post("https://ruqqus.com/api/vote/post/%s/%s" % (post_id, x))).status_code == 204 else x
     
     def vote_comment(self, comment_id, x="1"):
-        return self.session.post("https://ruqqus.com/api/vote/comment/%s/%s" % (comment_id, x)).status_code == 204
+        return True if (x:=self.session.post("https://ruqqus.com/api/vote/comment/%s/%s" % (comment_id, x))).status_code == 204 else x
     
     def admin_image_posts_listing(self, page=1):
         return self.session.get("https://ruqqus.com/admin/image_posts?page=" + str(page)).json()
