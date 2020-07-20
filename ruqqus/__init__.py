@@ -126,11 +126,11 @@ class RuqqusAPI(object):
     
     # <official v1>
     def guild(self, boardname):
-        return self.session.get(self.base + "/guild/" + boardname).json()
+        return Guild(self, self.session.get(self.base + "/guild/" + boardname).json())
     def user(self, username):
-        return self.session.get(self.base + "/user/" + username).json()
+        return User(self, self.session.get(self.base + "/user/" + username).json())
     def post(self, pid):
-        return self.session.get(self.base + "/post/" + pid).json()
+        return Post(self, self.session.get(self.base + "/post/" + pid).json())
     def comment(self, cid):
         return self.session.get(self.base + "/comment/" + cid).json()
     # </official v1>
@@ -144,16 +144,16 @@ class RuqqusAPI(object):
         return r.status_code == 204
 
     def board_listing(self, name):
-        return self.handle(self.session.get(f"{self.base}/guild/{name}/listing"))
+        return [Post(self,x) for x in self.handle(self.session.get(f"{self.base}/guild/{name}/listing"))]
     
     def user_listing(self, username):
-        return self.handle(self.session.get(f"{self.base}/user/{username}/listing"))
+        return [Post(self, x) for x in self.handle(self.session.get(f"{self.base}/user/{username}/listing"))]
     
     def home(self, only=None, sort="hot", t="all", page=1):
-        return self.session.get(f"{self.base}/front/listing?sort={sort}&t={t}&page={page}" + ("" if not only else f"&only={only}")).json()
+        return [Post(self, x) for x in self.session.get(f"{self.base}/front/listing?sort={sort}&t={t}&page={page}" + ("" if not only else f"&only={only}")).json()]
     
     def front_all(self, page=1, sort="hot", t="all"):
-        return self.session.get(f"{self.base}/all/listing?page={page}&sort={sort}&t={t}").json()
+        return [Post(self, x) for x in self.session.get(f"{self.base}/all/listing?page={page}&sort={sort}&t={t}").json()]
     # </unofficial v1>
 
     # <unofficial>
