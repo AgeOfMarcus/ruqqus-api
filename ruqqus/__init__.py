@@ -184,16 +184,16 @@ class RuqqusAPI(object):
         return self.session.get(f"https://ruqqus.com/giphy?searchTerm={searchTerm}&limit={limit}").json()
     
     def me(self):
-        return User(self, self.user(self.session.get("https://ruqqus.com/me").url.split("@")[1]))
+        return self.user(self.session.get("https://ruqqus.com/me").url.split("@")[1])
 
     def random_post(self):
-        return Post(self, self.post(self.session.get("https://ruqqus.com/random/post").url.split("/")[-2]))
+        return self.post(self.session.get("https://ruqqus.com/random/post").url.split("/")[-2])
     
     def random_guild(self):
-        return Guild(self, self.guild(self.session.get("https://ruqqus.com/random/guild").url.split("+")[1]))
+        return self.guild(self.session.get("https://ruqqus.com/random/guild").url.split("+")[1])
     
     def random_user(self):
-        return User(self, self.user(self.session.get("https://ruqqus.com/random/user").url.split("@")[1]))
+        return self.user(self.session.get("https://ruqqus.com/random/user").url.split("@")[1])
 
     def feeds_public(self, sort="hot"):
         r = self.session.get("https://ruqqus.com/feeds/" + sort)
