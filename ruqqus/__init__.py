@@ -28,7 +28,7 @@ class Post(object):
         self.thumb_url = json['thumb_url']
         self.title = json['title']
         self.url = json['url']
-        self.voted = json['voted']
+        self.voted = json.get('voted')
         self.json = json
     def vote(self, v=1):
         if not v in [-1, 0, 1]: raise ValueError("Vote must be -1, 0, or 1")
