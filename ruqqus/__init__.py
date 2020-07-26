@@ -198,7 +198,7 @@ class RuqqusAPI(object):
     def feeds_public(self, sort="hot"):
         r = self.session.get("https://ruqqus.com/feeds/" + sort)
         try:
-            return atoma.parse_atom_bytes(r.content)
+            return [self.post(i.id_.split('/')[-2]) for i in atoma.parse_atom_bytes(r.content).entries]
         except atoma.exceptions.FeedXMLError:
             return r
 
