@@ -45,7 +45,7 @@ class Post(object):
 class User(object):
     def __init__(self, ruqqus, json):
         self.ruqqus = ruqqus
-        self.badges = json['badges']
+        self.badges = json.get('badges')
         self.banner_url = "https://ruqqus.com" + json['banner_url']
         self.comment_count = json['comment_count']
         self.comment_rep = json['comment_rep']
