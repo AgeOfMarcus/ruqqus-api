@@ -32,7 +32,7 @@ class Post(object):
         self.json = json
     def vote(self, v=1):
         if not v in [-1, 0, 1]: raise ValueError("Vote must be -1, 0, or 1")
-        return self.ruqqus.vote_post(self.id, v)
+        return self.ruqqus.vote_post(self.id, str(v))
     def reply(self, body):
         return self.ruqqus.api_comment(self.id, "t2"+self.id, body)
     def __str__(self):
@@ -97,6 +97,31 @@ class Guild(object):
         return self.name
     def __repr__(self):
         return "Guild(%s)" % self.name
+
+class Comment(object):
+    def __init__(self, ruqqus, json):
+        self.ruqqus = ruqqus
+        self.json = json
+        self.author = ruqqus.user(json['author'])
+        self.body = json['body']
+        self.body_html = json['body_html']
+        self.id = json['id']
+        self.is_archived = json['is_archived']
+        self.level = json['level']
+        self.parent = json['parent']
+        self.post = ruqqus.post(json['post'])
+        self.title = json['title']
+    def __str__(self):
+        return self.body
+    def __repr__(self):
+        return f"Comment({self.id})"
+    def reply(self, body):
+        return self.ruqqus.api_comment(self.post.id, self.parent, body)
+    def vote(self, v=1):
+        if not v in [-1,0,1]: raise ValueError('Vote must be -1, 0, or 1')
+        return self.ruqqus.vote_comment(self.id, str(v))
+
+
 
 class RuqqusAPI(object):
     def __init__(self, username, password):
