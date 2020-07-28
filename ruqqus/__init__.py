@@ -34,7 +34,9 @@ class Post(object):
         if not v in [-1, 0, 1]: raise ValueError("Vote must be -1, 0, or 1")
         return self.ruqqus.vote_post(self.id, str(v))
     def reply(self, body):
-        return self.ruqqus.api_comment(self.id, "t2"+self.id, body)
+        return self.ruqqus.api_comment(self.id, "t2_"+self.id, body)
+    def delete(self):
+        return self.ruqqus.delete_post(self.id)
     def __str__(self):
         return self.title
     def __repr__(self):
@@ -120,6 +122,8 @@ class Comment(object):
     def vote(self, v=1):
         if not v in [-1,0,1]: raise ValueError('Vote must be -1, 0, or 1')
         return self.ruqqus.vote_comment(self.id, str(v))
+    def delete(self):
+        return self.ruqqus.delete_comment(self.id)
 
 
 
@@ -157,7 +161,7 @@ class RuqqusAPI(object):
     def post(self, pid):
         return Post(self, self.session.get(self.base + "/post/" + pid).json())
     def comment(self, cid):
-        return self.session.get(self.base + "/comment/" + cid).json()
+        return Comment(self, self.session.get(self.base + "/comment/" + cid).json())
     # </official v1>
 
     # <unofficial v1>
