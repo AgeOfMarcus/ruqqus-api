@@ -46,7 +46,7 @@ class User(object):
     def __init__(self, ruqqus, json):
         self.ruqqus = ruqqus
         self.badges = json.get('badges')
-        self.banner_url = "https://ruqqus.com" + json['banner_url']
+        self.banner_url = None if not 'banner_url' in json else ("https://ruqqus.com" + json['banner_url'])
         self.comment_count = json['comment_count']
         self.comment_rep = json['comment_rep']
         self.created = datetime.datetime.utcfromtimestamp(json['created_utc'])
